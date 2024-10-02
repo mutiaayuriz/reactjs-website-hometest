@@ -5,7 +5,6 @@ const HTTP_CONTENT_TYPE_JSON = "application/json";
 
 class ProductService {
   static getListProduct = async () => {
-    console.log('masuk sini')
     const response = await axios({
       url: `${API_HOST}`,
       method: "get",
@@ -13,10 +12,21 @@ class ProductService {
       data: null,
     });
 
-    console.log('response list->', response)
     let data = { data: response.data };
 
     return data;
+  };
+
+  static deleteProduct = async ({ id }) => {
+    let url = `${API_HOST}/${id}`;
+
+    return axios({
+      url,
+      method: 'delete',
+      headers: {
+        'content-type': HTTP_CONTENT_TYPE_JSON,
+      },
+    });
   };
 
   

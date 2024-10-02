@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import ProductService from "../service/productService";
 
 const HomeProduct = () => {
   const data = useSelector((state) => state.data);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchValue, setSearchValue] = useState();
   const [productList, setProductList] = useState(data ?? []);
   const [rowsLimit] = useState(5);
@@ -15,7 +15,6 @@ const HomeProduct = () => {
 
   const onChangeSearchInput = (e) => {
     setSearchValue(e.target.value.toLowerCase());
-    console.log("onchange searchValue->", searchValue);
   };
 
   const onKeyDownSearchInput = (e) => {
@@ -24,12 +23,10 @@ const HomeProduct = () => {
         const results = productList.filter((product) => {
           return product.name.toLowerCase().includes(searchValue);
         });
-        console.log("results->", results);
         setProductList(results);
         setRowsToShow(results.slice(0, rowsLimit));
         setCurrentPage(0);
         setTotalPage(Math.ceil(results?.length / rowsLimit));
-        console.log("result search=>", results);
       } else {
         clearData();
       }
@@ -41,12 +38,10 @@ const HomeProduct = () => {
       const results = productList.filter((product) => {
         return product.name.toLowerCase().includes(searchValue);
       });
-      console.log("results->", results);
       setProductList(results);
       setRowsToShow(results.slice(0, rowsLimit));
       setCurrentPage(0);
       setTotalPage(Math.ceil(results?.length / rowsLimit));
-      console.log("result search=>", results);
     } else {
       clearData();
     }
@@ -59,20 +54,39 @@ const HomeProduct = () => {
     setTotalPage(Math.ceil(data?.length / rowsLimit));
   };
 
+  const deleteProduct = (id) => {
+    ProductService.deleteProduct({
+      id,
+    })
+      .then(() => {
+        getDataProductList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getDataProductList = () => {
+    ProductService.getListProduct()
+      .then((response) => {
+        if (response) {
+          setProductList(response.data);
+          const sortedProducts = response.data.slice().sort((a, b) => a.price - b.price);
+          setProductList(sortedProducts);
+          setRowsToShow(sortedProducts.slice(0, rowsLimit));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const nextPage = () => {
     const startIndex = rowsLimit * (currentPage + 1);
     const endIndex = startIndex + rowsLimit;
     const newArray = data.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     setCurrentPage(currentPage + 1);
-    console.log(
-      "result=>",
-      currentPage,
-      startIndex,
-      endIndex,
-      newArray,
-      totalPage
-    );
   };
 
   const previousPage = () => {
@@ -91,7 +105,7 @@ const HomeProduct = () => {
     const sortedProducts = data.slice().sort((a, b) => a.price - b.price);
     setProductList(sortedProducts);
     setRowsToShow(sortedProducts.slice(0, rowsLimit));
-  }, []);
+  }, [data]);
 
   return (
     <div className="min-h-screen h-full bg-white flex  items-center justify-center pt-10 pb-14">
@@ -267,7 +281,7 @@ const HomeProduct = () => {
                           />
                         </svg>
                       </div>
-                      <div onClick={() => console.log("delete->", index)}>
+                      <div onClick={() => deleteProduct(data.id)}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 16 16"
