@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ProductService from "../service/productService";
 import CreateProduct from "./CreateProduct";
+import EditProduct from "./EditProduct";
 
 const HomeProduct = () => {
   const data = useSelector((state) => state.data);
@@ -14,6 +15,8 @@ const HomeProduct = () => {
   );
   const [currentPage, setCurrentPage] = useState(0);
   const [createProductStatus, setCreateProductStatus] = useState(false);
+  const [editProductStatus, setEditProductStatus] = useState(false);
+  const [dataProductSelected, setDataProductSelected] = useState({});
 
   const onChangeSearchInput = (e) => {
     setSearchValue(e.target.value.toLowerCase());
@@ -105,9 +108,18 @@ const HomeProduct = () => {
     }
   };
 
+  const editProduct = (dataSelected) => {
+    setEditProductStatus(true);
+    setDataProductSelected(dataSelected);
+  }
+
   const newMessage = (newMessage) => {
     if (newMessage === "cancel" || newMessage === "save") {
       setCreateProductStatus(false);
+      getDataProductList();
+    } else if (newMessage === "edit" || newMessage === "cancelEdit") {
+      setEditProductStatus(false);
+      getDataProductList();
     }
   };
 
@@ -126,6 +138,11 @@ const HomeProduct = () => {
             <CreateProduct newMessage={newMessage} />{" "}
           </>
         ) : (
+          editProductStatus ? 
+          <>
+          <EditProduct dataSelected={dataProductSelected} newMessage={newMessage}  />
+          </>
+          :
           <>
             <div>
               <h1 className="text-2xl font-medium">Product</h1>
@@ -296,7 +313,7 @@ const HomeProduct = () => {
                         }`}
                       >
                         <div className="flex">
-                          <div onClick={() => console.log("edit->", index)}>
+                          <div onClick={() => editProduct(data) }>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 16 16"

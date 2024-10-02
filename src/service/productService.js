@@ -8,7 +8,7 @@ class ProductService {
     const response = await axios({
       url: `${API_HOST}`,
       method: "get",
-      headers: { "content-type": HTTP_CONTENT_TYPE_JSON},
+      headers: { "content-type": HTTP_CONTENT_TYPE_JSON },
       data: null,
     });
 
@@ -17,19 +17,41 @@ class ProductService {
     return data;
   };
 
+  static createProduct = async (data) => {
+    let url = `${API_HOST}/`;
+    return axios({
+      url,
+      data: data,
+      method: "post",
+      headers: {
+        "content-type": HTTP_CONTENT_TYPE_JSON,
+      },
+    });
+  };
+
+  static updateProduct = async ( id, data ) => {
+    let url = `${API_HOST}/${id}`;
+    return axios({
+      url,
+      data: data,
+      method: "put",
+      headers: {
+        "content-type": HTTP_CONTENT_TYPE_JSON,
+      },
+    });
+  };
+
   static deleteProduct = async ({ id }) => {
     let url = `${API_HOST}/${id}`;
 
     return axios({
       url,
-      method: 'delete',
+      method: "delete",
       headers: {
-        'content-type': HTTP_CONTENT_TYPE_JSON,
+        "content-type": HTTP_CONTENT_TYPE_JSON,
       },
     });
   };
-
-  
 }
 
 export default ProductService;
