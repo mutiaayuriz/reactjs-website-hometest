@@ -11,7 +11,7 @@ Instalation
 
 Clone repo using ssh (make sure already have ssh on github account)
 
-    git clone git@github.com:mutiaayuriz/vuejs-website-hometest.git
+    git@github.com:mutiaayuriz/reactjs-website-hometest.git
 
 Install node module
 
